@@ -2,6 +2,6 @@
 {
     internal interface IRoute
     {
-        string GetRoute { get; }
+        string GetRoute(ApiVersion apiVersion);
     }
 }

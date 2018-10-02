@@ -9,9 +9,9 @@ using Codecov.Url;
 
 namespace Codecov.Upload
 {
-    internal class WebClient : Upload
+    internal class WebClientV4 : UploadV4
     {
-        public WebClient(IUrl url, IReport report, ITerminal powerShell)
+        public WebClientV4(IUrl url, IReport report, ITerminal powerShell)
             : base(url, report)
         {
             PowerShell = powerShell;
@@ -27,7 +27,7 @@ namespace Codecov.Upload
                 $client = New-Object System.Net.WebClient;
                 $client.Headers.add('X-Content-Type','application/x-gzip');
                 $client.Headers.add('X-Reduced-Redundancy','false');
-                $client.UploadString('{Url.GetUrl}', 'POST', '');
+                $client.UploadString('{Uri}', 'POST', '');
             ";
 
             return PowerShell.RunScript(script);

@@ -4,6 +4,6 @@ namespace Codecov.Url
 {
     internal interface IUrl
     {
-        Uri GetUrl { get; }
+        Uri GetUrl(ApiVersion version);
     }
 }

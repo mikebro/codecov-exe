@@ -31,7 +31,7 @@ namespace Codecov.Program
 
         private ICoverage Coverage => new Coverage.Tool.Coverage(CommandLineCommandLineOptions);
 
-        private IUpload Upload => new Uploads(Url, Report, Terminals);
+        private IUpload Upload => new Uploads(Url, Report, Terminals, CommandLineCommandLineOptions.DisableS3);
 
         private IUrl Url => new Url.Url(new Host(CommandLineCommandLineOptions), new Route(), new Query(CommandLineCommandLineOptions, Repositories, ContinuousIntegrationServer, Yaml));
 
@@ -48,16 +48,6 @@ namespace Codecov.Program
         private ISourceCode SourceCode => new SourceCode(VersionControlSystem);
 
         private IVersionControlSystem VersionControlSystem => VersionControlSystemFactory.Create(CommandLineCommandLineOptions, Terminals[TerminalName.Generic]);
-
-        private string DisplayUrl
-        {
-            get
-            {
-                var url = Url.GetUrl.ToString();
-                var regex = new Regex(@"token=\w{8}-\w{4}-\w{4}-\w{4}-\w{12}&");
-                return regex.Replace(url, string.Empty);
-            }
-        }
 
         public void Uploader()
         {
@@ -107,24 +97,29 @@ namespace Codecov.Program
             if (CommandLineCommandLineOptions.Dump)
             {
                 Log.Warning("Skipping upload and dumping contents.");
-                Log.Information($"url: {Url.GetUrl}");
                 Log.Information(Report.Reporter);
                 return;
             }
 
             Log.Information("Uploading Reports.");
-            Log.Information($"url: {Url.GetUrl.Scheme}://{Url.GetUrl.Authority}");
-            Log.Verboase($"api endpoint: {Url.GetUrl}");
-            Log.Information($"query: {DisplayUrl}");
             Log.Information("Pinging Codecov");
 
             var response = Upload.Uploader();
             Log.Verboase($"response: {response}");
             var splitResponse = response.Split('\n');
-            var s3 = new Uri(splitResponse[1]);
-            var reportUrl = splitResponse[0];
-            Log.Information($"Uploading to S3 {s3.Scheme}://{s3.Authority}");
-            Log.Information($"View reports at: {reportUrl}");
+
+            if (CommandLineCommandLineOptions.DisableS3)
+            {
+                var reportUrl = splitResponse[1];
+                Log.Information($"View reports at: {reportUrl}");
+            }
+            else
+            {
+                var s3 = new Uri(splitResponse[1]);
+                var reportUrl = splitResponse[0];
+                Log.Information($"Uploading to S3 {s3.Scheme}://{s3.Authority}");
+                Log.Information($"View reports at: {reportUrl}");
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Codecov.Factories
 
             foreach (var key in terminals.Keys)
             {
-                if (!terminals[key].Exits)
+                if (!terminals[key].Exists)
                 {
                     terminals.Remove(key);
                 }

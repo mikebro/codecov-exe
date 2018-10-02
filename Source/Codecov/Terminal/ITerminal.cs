@@ -2,7 +2,7 @@
 {
     internal interface ITerminal
     {
-        bool Exits { get; }
+        bool Exists { get; }
 
         string Run(string command, string commandArguments);
 

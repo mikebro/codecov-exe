@@ -11,9 +11,9 @@ namespace Codecov.Upload
     {
         private readonly Lazy<IEnumerable<IUpload>> _uploaders;
 
-        public Uploads(IUrl url, IReport report, IDictionary<TerminalName, ITerminal> terminals)
+        public Uploads(IUrl url, IReport report, IDictionary<TerminalName, ITerminal> terminals, bool disableS3)
         {
-            _uploaders = new Lazy<IEnumerable<IUpload>>(() => SetUploaders(url, report, terminals));
+            _uploaders = new Lazy<IEnumerable<IUpload>>(() => SetUploaders(url, report, terminals, disableS3));
         }
 
         private IEnumerable<IUpload> Uploaders => _uploaders.Value;
@@ -34,13 +34,22 @@ namespace Codecov.Upload
             throw new Exception("Failed to upload the report.");
         }
 
-        private static IEnumerable<IUpload> SetUploaders(IUrl url, IReport report, IDictionary<TerminalName, ITerminal> terminals)
+        private static IEnumerable<IUpload> SetUploaders(IUrl url, IReport report, IDictionary<TerminalName, ITerminal> terminals, bool disableS3)
         {
-            var uploaders = new List<IUpload> { new HttpWebRequest(url, report) };
+            var uploaders = new List<IUpload>();
 
-            if (terminals[TerminalName.Powershell].Exits)
+            if (disableS3)
             {
-                uploaders.Add(new WebClient(url, report, terminals[TerminalName.Powershell]));
+                uploaders.Add(new HttpWebRequestV2(url, report));
+            }
+            else
+            {
+                uploaders.Add(new HttpWebRequestV4(url, report));
+
+                if (terminals[TerminalName.Powershell].Exists)
+                {
+                    uploaders.Add(new WebClientV4(url, report, terminals[TerminalName.Powershell]));
+                }
             }
 
             return uploaders;

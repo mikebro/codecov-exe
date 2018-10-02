@@ -46,6 +46,13 @@ namespace Codecov.Program
         public bool DisableNetwork { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to use S3 or not.
+        /// </summary>
+        /// <value>A value indicating whether to upload to S3 or not.</value>
+        [Option("disable-s3", HelpText = "Disable uploading the reports directly to S3.")]
+        public bool DisableS3 { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether to don't upload and dump to stdin.
         /// </summary>
         /// <value>A value indicating whether to don't upload and dump to stdin.</value>

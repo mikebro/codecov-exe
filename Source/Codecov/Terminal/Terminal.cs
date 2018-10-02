@@ -8,7 +8,7 @@ namespace Codecov.Terminal
 {
     internal class Terminal : ITerminal
     {
-        public virtual bool Exits => true;
+        public virtual bool Exists => true;
 
         public string RunScript(string script)
         {

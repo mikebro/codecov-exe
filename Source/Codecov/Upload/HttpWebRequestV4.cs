@@ -9,9 +9,9 @@ using Codecov.Url;
 
 namespace Codecov.Upload
 {
-    internal class HttpWebRequest : Upload
+    internal class HttpWebRequestV4 : UploadV4
     {
-        public HttpWebRequest(IUrl url, IReport report)
+        public HttpWebRequestV4(IUrl url, IReport report)
             : base(url, report)
         {
         }
@@ -20,7 +20,7 @@ namespace Codecov.Upload
         {
             Log.Verboase("Trying to upload using HttpWebRequest.");
 
-            var postRequest = (System.Net.HttpWebRequest)WebRequest.Create(Url.GetUrl);
+            var postRequest = (System.Net.HttpWebRequest)WebRequest.Create(Uri);
             postRequest.Method = "POST";
             postRequest.Headers["X-Reduced-Redundancy"] = "false";
             postRequest.Headers["X-Content-Type"] = "application/x-gzip";

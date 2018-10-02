@@ -2,7 +2,7 @@
 {
     internal class PowerShell : Terminal
     {
-        public override bool Exits => !string.IsNullOrWhiteSpace(RunScript("$PSVersionTable.PSVersion"));
+        public override bool Exists => !string.IsNullOrWhiteSpace(RunScript("$PSVersionTable.PSVersion"));
 
         public override string Run(string command, string commandArguments)
         {
